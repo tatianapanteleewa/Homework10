@@ -3,6 +3,9 @@ const listElement = document.getElementById('list');
 const nameInputElement = document.getElementById('name-input');
 const commentInputElement = document.getElementById('comment-input');
 const likeCounter = document.querySelectorAll('.likes-counter');
+const inputText = document.getElementById("comment-input");
+
+inputText.value = "";
 
 const dateOption = {
     year: '2-digit',
@@ -37,7 +40,7 @@ const comments = [
 const clickLikeButton = () => {
     const likeButtonsElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonsElements) {
-        likeButtonElement.addEventListener('click', () => {
+        likeButtonElement.addEventListener('click', (event) => {
             const index = likeButtonElement.dataset.index;
             if (comments[index].liked === false) {
                 comments[index].liked = true;
@@ -47,6 +50,8 @@ const clickLikeButton = () => {
                 comments[index].likes -= 1;
             }
             renderComments();
+            event.stopPropagation();
+
         });
     }
 };
@@ -90,10 +95,12 @@ const renderComments = () => {
 
     listElement.innerHTML = commentsHtml;
     clickLikeButton();
+    clickComment();
 };
 
 renderComments();
-clickComment();
+
+
 
 
 

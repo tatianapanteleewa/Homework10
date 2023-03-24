@@ -5,48 +5,53 @@ const commentInputElement = document.getElementById('comment-input');
 const likeCounter = document.querySelectorAll('.likes-counter');
 const inputText = document.getElementById("comment-input");
 
+
+
 inputText.value = "";
 
-const dateOption = {
-    year: '2-digit',
-    month: 'numeric',
-    day: 'numeric',
-};
-const timeOption = {
-    timezone: 'UTC',
-    hour: 'numeric',
-    minute: '2-digit',
-};
-let nowDate = new Date().toLocaleString('ru-RU', dateOption);
-let nowTime = new Date().toLocaleString('ru-RU', timeOption);
 
-const comments = [
-    {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        text: 'Это будет первый комментарий на этой странице',
-        likes: 3,
-        liked: false,
-    },
-    {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        text: 'Мне нравится как оформлена эта страница! ❤',
-        likes: 75,
-        liked: true,
-    },
-];
+
+let comments = [];
+
+fetch(
+    'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
+    method: "GET"
+}).then((response) => {
+    response.json().then((responseData) => {
+        const options = {
+            year: '2-digit',
+            month: 'numeric',
+            day: 'numeric',
+            timezone: 'UTC',
+            hour: 'numeric',
+            minute: '2-digit',
+        };
+
+        const appComments = responseData.comments.map((comment) => {
+            return {
+                name: comment.author.name,
+                date: comment.date.toLocaleString('ru-RU', options),
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+            };
+        });
+        comments = appComments;
+        renderComments();
+    })
+});
+
 
 const clickLikeButton = () => {
     const likeButtonsElements = document.querySelectorAll('.like-button');
     for (const likeButtonElement of likeButtonsElements) {
         likeButtonElement.addEventListener('click', (event) => {
             const index = likeButtonElement.dataset.index;
-            if (comments[index].liked === false) {
-                comments[index].liked = true;
+            if (comments[index].isLiked === false) {
+                comments[index].isLiked = true;
                 comments[index].likes += 1;
-            } else if (comments[index].liked === true) {
-                comments[index].liked = false;
+            } else if (comments[index].isLiked === true) {
+                comments[index].isLiked = false;
                 comments[index].likes -= 1;
             }
             renderComments();
@@ -98,11 +103,6 @@ const renderComments = () => {
     clickComment();
 };
 
-renderComments();
-
-
-
-
 
 buttonElement.addEventListener('click', () => {
     nameInputElement.classList.remove('error');
@@ -116,16 +116,54 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
-    comments.push({
-        name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-        date: nowDate + " " + nowTime,
-        text: commentInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-        likes: 0,
-        liked: false,
+    // comments.push({
+    //     author: { name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;") },
+    //     date: nowDate + " " + nowTime,
+    //     text: commentInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+    //     likes: 0,
+    //     isLiked: false,
+    // });
+
+    fetch(
+        'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
+        method: "POST",
+        body: JSON.stringify({
+            text: commentInputElement.value,
+            name: nameInputElement.value,
+        }),
+    }).then((response) => {
+        response.json().then((responseData) => {
+            comments = responseData.comments;
+            renderComments();
+        })
+    })
+    fetch(
+        'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
+        method: "GET"
+    }).then((response) => {
+        response.json().then((responseData) => {
+            const options = {
+                year: '2-digit',
+                month: 'numeric',
+                day: 'numeric',
+                timezone: 'UTC',
+                hour: 'numeric',
+                minute: '2-digit',
+            };
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: comment.date.toLocaleString('ru-RU', options),
+                    text: comment.text,
+                    likes: comment.likes,
+                    isLiked: false,
+                };
+            });
+            comments = appComments;
+            renderComments();
+        })
     });
-
-    renderComments();
-
     nameInputElement.value = '';
     commentInputElement.value = '';
+
 });

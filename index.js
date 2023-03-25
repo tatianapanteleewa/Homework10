@@ -8,6 +8,10 @@ const inputText = document.getElementById("comment-input");
 inputText.value = "";
 let comments = [];
 
+const downloadAlert = () => {
+    alert('Приложение загружается...');
+}
+
 const fetchAndRenderComments = () => {
     return fetch(
         'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
@@ -99,6 +103,8 @@ const renderComments = () => {
     clickLikeButton();
     clickComment();
 };
+
+downloadAlert();
 fetchAndRenderComments();
 renderComments();
 

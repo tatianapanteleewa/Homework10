@@ -8,34 +8,36 @@ const inputText = document.getElementById("comment-input");
 inputText.value = "";
 let comments = [];
 
-fetch(
-    'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
-    method: "GET"
-}).then((response) => {
-    response.json().then((responseData) => {
-        const options = {
-            year: '2-digit',
-            month: 'numeric',
-            day: 'numeric',
-            timezone: 'UTC',
-            hour: 'numeric',
-            minute: '2-digit',
-        };
-
-        const appComments = responseData.comments.map((comment) => {
-            return {
-                name: comment.author.name,
-                date: comment.date.toLocaleString('ru-RU', options),
-                text: comment.text,
-                likes: comment.likes,
-                isLiked: false,
-            };
-        });
-        comments = appComments;
-        renderComments();
+const fetchAndRenderComments = () => {
+    return fetch(
+        'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
+        method: "GET"
+    }).then((response) => {
+        return response.json();
     })
-});
+        .then((responseData) => {
+            const options = {
+                year: '2-digit',
+                month: 'numeric',
+                day: 'numeric',
+                timezone: 'UTC',
+                hour: 'numeric',
+                minute: '2-digit',
+            };
 
+            const appComments = responseData.comments.map((comment) => {
+                return {
+                    name: comment.author.name,
+                    date: new Date(comment.date).toLocaleString("ru-RU", options),
+                    text: comment.text,
+                    likes: comment.likes,
+                    isLiked: false,
+                };
+            });
+            comments = appComments;
+            renderComments();
+        })
+};
 
 const clickLikeButton = () => {
     const likeButtonsElements = document.querySelectorAll('.like-button');
@@ -97,7 +99,8 @@ const renderComments = () => {
     clickLikeButton();
     clickComment();
 };
-
+fetchAndRenderComments();
+renderComments();
 
 buttonElement.addEventListener('click', () => {
     nameInputElement.classList.remove('error');
@@ -111,13 +114,8 @@ buttonElement.addEventListener('click', () => {
         return;
     }
 
-    // comments.push({
-    //     author: { name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;") },
-    //     date: nowDate + " " + nowTime,
-    //     text: commentInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    //     likes: 0,
-    //     isLiked: false,
-    // });
+    buttonElement.disabled = true;
+    buttonElement.textContent = 'Комментарий добавляется...';
 
     fetch(
         'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
@@ -126,38 +124,25 @@ buttonElement.addEventListener('click', () => {
             text: commentInputElement.value,
             name: nameInputElement.value,
         }),
-    }).then((response) => {
-        response.json().then((responseData) => {
-            fetch(
-                'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
-                method: "GET"
-            }).then((response) => {
-                response.json().then((responseData) => {
-                    const options = {
-                        year: '2-digit',
-                        month: 'numeric',
-                        day: 'numeric',
-                        timezone: 'UTC',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                    };
-                    const appComments = responseData.comments.map((comment) => {
-                        return {
-                            name: comment.author.name,
-                            date: comment.date.toLocaleString('ru-RU', options),
-                            text: comment.text,
-                            likes: comment.likes,
-                            isLiked: false,
-                        };
-                    });
-                    comments = appComments;
-                    renderComments();
-                })
-            });
-        })
     })
+        .then((response) => {
+            return response.json();
+        })
+        .then(() => {
+            return fetchAndRenderComments();
+
+        })
+        .then((data) => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = 'Написать';
+        });
+
 
     nameInputElement.value = '';
     commentInputElement.value = '';
-
 });
+
+
+
+
+

@@ -5,7 +5,9 @@ const commentInputElement = document.getElementById('comment-input');
 const likeCounter = document.querySelectorAll('.likes-counter');
 const inputText = document.getElementById("comment-input");
 
-inputText.value = "";
+commentInputElement.value = "";
+nameInputElement.value = "";
+
 let comments = [];
 
 const downloadAlert = () => {
@@ -40,7 +42,7 @@ const fetchAndRenderComments = () => {
             });
             comments = appComments;
             renderComments();
-        })
+        });
 };
 
 const clickLikeButton = () => {
@@ -109,19 +111,26 @@ fetchAndRenderComments();
 renderComments();
 
 buttonElement.addEventListener('click', () => {
+
     nameInputElement.classList.remove('error');
     commentInputElement.classList.remove('error');
 
-    if (nameInputElement.value === '') {
+
+    if (nameInputElement.value.length <= 1) {
         nameInputElement.classList.add('error');
+        alert('Введено слишком короткое значение');
         return;
-    } else if (commentInputElement.value === '') {
+    } else if (commentInputElement.value.length <= 1) {
         commentInputElement.classList.add('error');
+        alert('Введено слишком короткое значение');
         return;
     }
 
     buttonElement.disabled = true;
     buttonElement.textContent = 'Комментарий добавляется...';
+    let form = document.querySelector('.add-form');
+    let formStyle = form.style.cssText;
+    formStyle.cssText += 'display: block';
 
     fetch(
         'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
@@ -129,10 +138,15 @@ buttonElement.addEventListener('click', () => {
         body: JSON.stringify({
             text: commentInputElement.value,
             name: nameInputElement.value,
+            forceError: true,
         }),
     })
         .then((response) => {
-            return response.json();
+            if (response.status === 201) {
+                return response.json();
+            } else {
+                throw new Error('Сервер упал');
+            }
         })
         .then(() => {
             return fetchAndRenderComments();
@@ -141,11 +155,15 @@ buttonElement.addEventListener('click', () => {
         .then((data) => {
             buttonElement.disabled = false;
             buttonElement.textContent = 'Написать';
+            nameInputElement.value = '';
+            commentInputElement.value = '';
+        })
+        .catch((error) => {
+            buttonElement.disabled = false;
+            buttonElement.textContent = 'Написать';
+            alert('Кажется, что-то пошло не так, попробуйте позже...');
+            console.warn(error);
         });
-
-
-    nameInputElement.value = '';
-    commentInputElement.value = '';
 });
 
 

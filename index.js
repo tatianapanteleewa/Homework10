@@ -1,6 +1,7 @@
 import { comments } from "./fetchAndRenderComments";
 import { getListCommentsEdit } from "./getListComments";
 import renderComments from "./renderComments";
+import { fetchAndRenderComments } from "./fetchAndRenderComments";
 
 const buttonElement = document.getElementById('add-button');
 const listElement = document.getElementById('list');
@@ -112,7 +113,7 @@ const downloadAlert = () => {
 
 
 downloadAlert();
-fetchAndRenderComments();
+fetchAndRenderComments(comments);
 
 // const getListCommentsEdit = (comment, index) => {
 //     return `<li id = "list-comment" data-index = '${index}' class="comment">

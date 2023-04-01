@@ -1,3 +1,5 @@
+import renderComments from "./renderComments";
+
 let comments = [];
 
 const fetchAndRenderComments = () => {
@@ -32,4 +34,4 @@ const fetchAndRenderComments = () => {
         });
 };
 
-export { comments };
+export { comments, fetchAndRenderComments };

@@ -1,4 +1,8 @@
-import { comments } from "./fetchAndRenderComments";
+console.log();
+
+import { comments } from "./fetchComments.js";
+import { getListCommentsEdit } from "./getListComments.js";
+const listElement = document.getElementById('list');
 
 const renderComments = (getListComments) => {
     const commentsHtml = comments

@@ -1,8 +1,8 @@
-import renderComments from "./renderComments";
+console.log();
 
 let comments = [];
 
-const fetchAndRenderComments = () => {
+const fetchComments = () => {
 
     return fetch(
         'https://webdev-hw-api.vercel.app/api/v1/:Panteleewa-Tatiana/comments', {
@@ -30,8 +30,6 @@ const fetchAndRenderComments = () => {
                 };
             });
             comments = appComments;
-            renderComments();
         });
 };
-
-export { comments, fetchAndRenderComments };
+export { comments, fetchComments };

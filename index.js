@@ -1,7 +1,10 @@
-import { comments } from "./fetchAndRenderComments";
-import { getListCommentsEdit } from "./getListComments";
-import renderComments from "./renderComments";
-import { fetchAndRenderComments } from "./fetchAndRenderComments";
+console.log();
+
+import { comments } from "./fetchComments.js";
+import { fetchComments } from "./fetchComments.js";
+import { getListCommentsEdit } from "./getListComments.js";
+import renderComments from "./renderComments.js";
+
 
 const buttonElement = document.getElementById('add-button');
 const listElement = document.getElementById('list');
@@ -113,7 +116,7 @@ const downloadAlert = () => {
 
 
 downloadAlert();
-fetchAndRenderComments(comments);
+fetchComments();
 
 // const getListCommentsEdit = (comment, index) => {
 //     return `<li id = "list-comment" data-index = '${index}' class="comment">

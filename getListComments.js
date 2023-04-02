@@ -1,3 +1,5 @@
+console.log();
+
 const getListCommentsEdit = (comment, index) => {
     return `<li id = "list-comment" data-index = '${index}' class="comment">
           <div class="comment-header">
